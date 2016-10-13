@@ -60,10 +60,10 @@ printSpaces([H|T]):-
 
 translatePrint(0):-
 	write('  ').
-translatePrint(Char):-
+translatePrint(Colour-Char):-
 	Char < 10,
 	write(' '),
 	write(Char).
-translatePrint(Char):-
+translatePrint(Colour-Char):-
 	Char >= 10,
 	write(Char).
