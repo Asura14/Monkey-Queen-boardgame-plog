@@ -47,7 +47,7 @@ printBoard([H|T]):-
 	printBoard(T).
 
 printLine(X):-
-	write('-------------------------------------'),
+	write(' -----------------------------------------------'),
 	nl.
 
 printSpaces([]):-
@@ -59,11 +59,12 @@ printSpaces([H|T]):-
 	printSpaces(T).
 
 translatePrint(0):-
-	write('  ').
+	write('   ').
 translatePrint(Colour-Char):-
 	Char < 10,
-	write(' '),
+	write('  '),
 	write(Char).
 translatePrint(Colour-Char):-
 	Char >= 10,
+	write(Colour),
 	write(Char).
