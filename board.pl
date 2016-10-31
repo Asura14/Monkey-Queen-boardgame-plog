@@ -1,7 +1,8 @@
 :- [gameplay].
 :- use_module(library(lists)).
 
-initialBoard([	[0,0,0,0,0,b-20,0,0,0,0,0,0],
+initialBoard(Board):- append([],[
+				[0,0,0,0,0,b-20,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0,0,0,0,0,0],
@@ -12,7 +13,7 @@ initialBoard([	[0,0,0,0,0,b-20,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0,0,0,0,0,0],
 				[0,0,0,0,0,0,0,0,0,0,0,0],
-				[0,0,0,0,0,0,w-20,0,0,0,0,0]]).
+				[0,0,0,0,0,0,w-20,0,0,0,0,0]], Board).
 
 printBoard([],Y):-
 	printLine(x),
@@ -43,7 +44,6 @@ printBoard([H|T],Y):-
 printTopCoor(X):-
 	write('    1   2   3   4   5   6   7   8   9  10  11  12'),
 	nl.
-
 printLine(X):-
 	write('   -----------------------------------------------'),
 	nl.
@@ -70,3 +70,44 @@ translatePrint(X):-
 	write(' '),
 	write(X),
 	write(' ').
+
+nextPlayer(ivory, cigar).
+nextPlayer(cigar, ivory).
+getPlayer(ivory, w).
+getPlayer(cigar, b).
+
+gameControler(Board, Player, 1, 1):-
+	nl,
+	printBoard(Board),
+	write(Player), write(' won this game!'), nl.
+gameControler(Board, Player, 0, 1):-
+	printBoard(Board),
+	write('Player with '), write(Player), write(' pieces turn.'), nl,
+	write('Move Piece Line (number): '), read(Y1), skip_line,
+    write('Move Piece Column (number): '), read(X1), skip_line,
+	write('Move Piece To Line (number): '), read(Y2), skip_line,
+    write('Move Piece To Column (number): '), read(X2), skip_line,
+    getPlayer(Player, PlayerChar),
+    FX is X1 - 1,
+    FY is Y1 - 1,
+    TX is X2 - 1,
+    TY is Y2 - 1,
+    tryToMovePiece(PlayerChar, Board, FX-FY, TX-TY, NextBoard, Victory),
+    nextPlayer(Player, NextPlayer),
+    gameControler(NextBoard, NextPlayer, Victory, 1).
+	
+
+mainMenu(Option):-
+	repeat,
+	write('1) 1 vs 1'),nl,
+	write('2) 1 vs PC'),nl,
+	write('3) PC vs PC'),nl,
+	write('0) Exit'),nl,nl,
+	write('Option: '),
+	read(Option), skip_line.
+
+game(Board):-
+	mainMenu(Option),
+	Option>=0, Option < 4,
+	initialBoard(Board),
+	gameControler(Board, ivory, 0, Option).
