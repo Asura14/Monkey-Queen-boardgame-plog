@@ -10,19 +10,20 @@ findPiece([H|T], FX, Piece, Enum):-
 	EnumNew is Enum + 1,
 	findPiece(T, FX, Piece, EnumNew).
 
-replacePiece(TX, [], Piece, HNew, Enum).
-replacePiece(TX, Board, Piece, _, -1):-
-	replacePiece(TX, Board, Piece, [], 0).
-replacePiece(TX, [H|T], Piece, HNew, Enum):-
+replacePiece(TX, [], Piece, HNew, Enum, Final):-
+	reverse(HNew, Final).
+replacePiece(TX, Board, Piece, _, -1, Final):-
+	replacePiece(TX, Board, Piece, [], 0, Final).
+replacePiece(TX, [H|T], Piece, HNew, Enum, Final):-
 	TX = Enum,
 	append([Piece], HNew, FinalH),
 	Enum2 is Enum + 1,
-	replacePiece(TX, T, Piece, FinalH, Enum2).
-replacePiece(TX, [H|T], Piece, HNew, Enum):-
+	replacePiece(TX, T, Piece, FinalH, Enum2, Final).
+replacePiece(TX, [H|T], Piece, HNew, Enum, Final):-
 	TX \== Enum,
 	append([H], HNew, FinalH),
 	Enum2 is Enum + 1,
-	replacePiece(TX, T, Piece, FinalH, Enum2).
+	replacePiece(TX, T, Piece, FinalH, Enum2, Final).
 
 %finds line where piece is 
 findLine(0,0,Line,Enum).
@@ -39,9 +40,9 @@ checkIfBelongsToPlayer(Player, C-N):-
 	Player = C.
 checkIfBelongsToPlayer(Player, C):-
 	Player = C.
-checkIfDoesntBelongsToPlayer(Player, C-N):-
+checkIfDoesntBelongToPlayer(Player, C-N):-
 	Player \== C.
-checkIfDoesntBelongsToPlayer(Player, C):-
+checkIfDoesntBelongToPlayer(Player, C):-
 	Player \== C.
 
 %checks every single cell for different move types
@@ -50,7 +51,7 @@ horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FXNew = TX, FYNew = TY,
 	findLine(BoardState, FXNew-FYNew, Line, 0),
 	findPiece(Line, FXNew, Piece, 0),
-	checkIfDoesntDoesntBelongsToPlayer(Player, Piece).
+	checkIfDoesntBelongToPlayer(Player, Piece).
 %left
 horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FXNew > TX, FYNew = TY,
@@ -72,7 +73,7 @@ verticalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FYNew = TY, FXNew = TX,
 	findLine(BoardState, FXNew-FYNew, Line, 0),
 	findPiece(Line,FXNew, Piece, 0),
-	checkIfDoesntBelongsToPlayer(Player, Piece).
+	checkIfDoesntBelongToPlayer(Player, Piece).
 %up
 verticalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FYNew > TY, FXNew = TX,
@@ -94,7 +95,7 @@ diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FYNew = TY,	FXNew = FX,
 	findLine(BoardState, FXNew-FYNew, Line, 0),
 	findPiece(Line,FXNew, Piece, 0),
-	checkIfDoesntBelongsToPlayer(Player, Piece).
+	checkIfDoesntBelongToPlayer(Player, Piece).
 %top left
 diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FYNew > TY,	FXNew > FX,
@@ -147,29 +148,54 @@ checkEndGame(Char, Piece, Victory):-
 checkEndGame([Colour-Char], Piece, Victory):-
 	Victory is 1.
 
-%todo: Clean FX-TX and replace TX-TY
-eatPiece(Player, Piece, [], FX-FY, TX-TY, Board, It, Victory).
-eatPiece(Player, Piece, [H|T], FX-FY, TX-TY, Board, It, Victory):-
+%Replaces TX-TY
+eatPiece(Player, Piece, [], FX-FY, TX-TY, Board, It, Victory, FinalBoard):-
+	append([], Board, FinalBoard).
+eatPiece(Player, Piece, [H|T], FX-FY, TX-TY, Board, It, Victory, FinalBoard):-
 	It = TY,
-	findPiece(H, FX, PieceInCell, 0),
+	findPiece(H, TX, PieceInCell, 0),
+	write(PieceInCell), nl, write(Piece), nl,
 	checkEndGame(PieceInCell, Piece, Victory),
-	replacePiece(TX, H, Piece, HNew, -1),
-	append(Board, [HNew], NewBoard),
+	replacePiece(TX, H, Piece, HNew, -1, Final),
+	append(Board, [Final], NewBoard),
 	It2 is It + 1,
-	eatPiece(Player, Piece, T, FX-FY, TX-TY, NewBoard, It2, Victory).
-eatPiece(Player, Piece, [H|T], FX-FY, TX-TY, Board, It, Victory):-
+	eatPiece(Player, Piece, T, FX-FY, TX-TY, NewBoard, It2, Victory, FinalBoard).
+eatPiece(Player, Piece, [H|T], FX-FY, TX-TY, Board, It, Victory, FinalBoard):-
 	It \== TY,
 	append(Board, [H], NewBoard),
 	It2 is It + 1,
-	eatPiece(Player, Piece, T, FX-FY, TX-TY, NewBoard, It2, Victory).
+	eatPiece(Player, Piece, T, FX-FY, TX-TY, NewBoard, It2, Victory, FinalBoard).
+
+%Cleans FX-TX
+eatPieceInitialPosition(Piece, [], FX-FY, Board, It, FinalBoard):-
+	append([], Board, FinalBoard).
+eatPieceInitialPosition([Colour-Char], [H|T], FX-FY, Board, It, FinalBoard):-
+	It = FY,
+	replacePiece(FX, H, Char, HNew, -1, Final),
+	append(Board, [Final], NewBoard),
+	It2 is It + 1,
+	eatPieceInitialPosition(Piece, T, FX-FY, NewBoard, It2, FinalBoard).
+eatPieceInitialPosition(Piece, [H|T], FX-FY, Board, It, FinalBoard):-
+	It = FY,
+	replacePiece(FX, H, 0, HNew, -1, Final),
+	append(Board, [Final], NewBoard),
+	It2 is It + 1,
+	eatPieceInitialPosition(Piece, T, FX-FY, NewBoard, It2, FinalBoard).
+eatPieceInitialPosition(Piece, [H|T], FX-FY, Board, It, FinalBoard):-
+	It \== TY,
+	append(Board, [H], NewBoard),
+	It2 is It + 1,
+	eatPieceInitialPosition(Piece, T, FX-FY, NewBoard, It2, FinalBoard).
 
 %main function to move piece (by calling all other functions) - IF Victory=1 -> End game
-tryToMovePiece(Player, BoardState, FX-FY, TX-TY, Board, Victory):-
+tryToMovePiece(Player, BoardState, FX-FY, TX-TY, FinalBoard2, Victory):-
 	validateFromPosition(Player, BoardState, FX-FY),
 	validateToPosition(Player, BoardState, FX-FY, TX-TY),
 	findLine(BoardState, FX-FY, Line, 0),
 	findPiece(Line, FX, Piece, 0),
-	eatPiece(Player, Piece, BoardState, FX-FY, TX-TY, Board, 0, Victory).
+	eatPiece(Player, Piece, BoardState, FX-FY, TX-TY, TempBoard, 0, Victory, FinalBoard),
+	write(FinalBoard), nl,
+	eatPieceInitialPosition(Piece, FinalBoard, FX-FY, TempBoard, 0, FinalBoard2).
 
 %validates if the position input is inside the board and belongs to the player
 validateFromPosition(Player, BoardState, FX-FY):-
