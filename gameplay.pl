@@ -40,6 +40,7 @@ checkIfBelongsToPlayer(Player, C-N):-
 	Player = C.
 checkIfBelongsToPlayer(Player, C):-
 	Player = C.
+%Check if doesnt belong to player
 checkIfDoesntBelongToPlayer(Player, C-N):-
 	Player \== C.
 checkIfDoesntBelongToPlayer(Player, C):-
@@ -55,7 +56,7 @@ horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 %left
 horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FXNew > TX, FYNew = TY,
-	FXNew1 is FX - 1,
+	FXNew1 is FXNew - 1,
 	findLine(BoardState, FXNew1-FYNew, Line, 0),
 	findPiece(Line, FXNew1, Piece, 0),
 	Piece = 0,
@@ -63,7 +64,7 @@ horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 %right
 horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FXNew < TX, FYNew = TY,
-	FXNew1 is FX + 1,
+	FXNew1 is FXNew + 1,
 	findLine(BoardState, FXNew1-FYNew, Line, 0),
 	findPiece(Line, FXNew1, Piece, 0),
 	Piece = 0,
@@ -146,6 +147,7 @@ checkEndGame(Char, Piece, Victory):-
 	Char = 0, 
 	Victory is 0.
 checkEndGame([Colour-Char], Piece, Victory):-
+	write(Colour-Char), write(' victory condition met'), nl,
 	Victory is 1.
 
 %Replaces TX-TY
@@ -154,7 +156,6 @@ eatPiece(Player, Piece, [], FX-FY, TX-TY, Board, It, Victory, FinalBoard):-
 eatPiece(Player, Piece, [H|T], FX-FY, TX-TY, Board, It, Victory, FinalBoard):-
 	It = TY,
 	findPiece(H, TX, PieceInCell, 0),
-	write(PieceInCell), nl, write(Piece), nl,
 	checkEndGame(PieceInCell, Piece, Victory),
 	replacePiece(TX, H, Piece, HNew, -1, Final),
 	append(Board, [Final], NewBoard),
@@ -191,10 +192,10 @@ eatPieceInitialPosition(Piece, [H|T], FX-FY, Board, It, FinalBoard):-
 tryToMovePiece(Player, BoardState, FX-FY, TX-TY, FinalBoard2, Victory):-
 	validateFromPosition(Player, BoardState, FX-FY),
 	validateToPosition(Player, BoardState, FX-FY, TX-TY),
+	write('validation TO ok'), nl,
 	findLine(BoardState, FX-FY, Line, 0),
 	findPiece(Line, FX, Piece, 0),
 	eatPiece(Player, Piece, BoardState, FX-FY, TX-TY, TempBoard, 0, Victory, FinalBoard),
-	write(FinalBoard), nl,
 	eatPieceInitialPosition(Piece, FinalBoard, FX-FY, TempBoard, 0, FinalBoard2).
 
 %validates if the position input is inside the board and belongs to the player
@@ -215,9 +216,12 @@ validateToPosition(Player, BoardState, FX-FY, TX-TY):-
 	%Horizontal
 	TX =< 11,
 	TX >= 0,
+	write('move is horizontal'),nl,
+	trace, notrace,
 	horizontalMovement(Player, BoardState, FX-FY, TX-TY, FX-FY).
 validateToPosition(Player, BoardState, FX-FY, TX-TY):-
 	%Diagonal
 	DeslocX is FX - TX,
 	DeslocY is FY - TY,
-	abs(DeslocY) = abs(DeslocX).
+	abs(DeslocY) = abs(DeslocX),
+	diagonalMovement(Player, BoardState, FX-FX, TX-TY, FX-FY).
