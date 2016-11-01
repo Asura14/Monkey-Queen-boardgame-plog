@@ -79,14 +79,14 @@ getPlayer(cigar, b).
 gameControler(Board, Player, 1, 1):-
 	nl,
 	printBoard(Board),
-	write(Player), write(' won this game!'), nl.
+	write('CONGRATULATIONS '), write(Player), write('! You won this game!'), nl, nl.
 gameControler(Board, Player, 0, 1):-
-	printBoard(Board),
+	nl, printBoard(Board), nl,
 	write('Player with '), write(Player), write(' pieces turn.'), nl,
-	write('Move Piece Line (number): '), read(Y1), skip_line,
-    write('Move Piece Column (number): '), read(X1), skip_line,
-	write('Move Piece To Line (number): '), read(Y2), skip_line,
-    write('Move Piece To Column (number): '), read(X2), skip_line,
+	write('Move Piece Line (number.): '), read(Y1), skip_line,
+    write('Move Piece Column (number.): '), read(X1), skip_line,
+	write('To Line (number.): '), read(Y2), skip_line,
+    write('To Column (number.): '), read(X2), skip_line,
     getPlayer(Player, PlayerChar),
     FX is X1 - 1,
     FY is Y1 - 1,
@@ -95,7 +95,6 @@ gameControler(Board, Player, 0, 1):-
     tryToMovePiece(PlayerChar, Board, FX-FY, TX-TY, NextBoard, Victory),
     nextPlayer(Player, NextPlayer),
     gameControler(NextBoard, NextPlayer, Victory, 1).
-	
 
 mainMenu(Option):-
 	repeat,
