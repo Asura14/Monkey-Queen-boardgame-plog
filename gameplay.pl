@@ -41,11 +41,6 @@ checkIfBelongsToPlayer(Player, C-N):-
 	Player = C.
 checkIfBelongsToPlayer(Player, C):-
 	Player = C.
-%Check if doesnt belong to player
-checkIfDoesntBelongToPlayer(Player, C-N):-
-	Player \== C.
-checkIfDoesntBelongToPlayer(Player, C):-
-	Player \== C.
 
 %checks every single cell for different move types, cells have to be 0s
 %horizontal
@@ -212,9 +207,7 @@ replacePieceAtPosition(Piece, [H|T], FX-FY, Board, It, FinalBoard):-
 
 %leaves a child behind if queen is size>2 and if doesn't eat an enemy piece
 dropChild(0, Colour, FX-FY, Board, BoardWithChild):-
-	write('entrou'),
-	append(Board, [], BoardWithChild),
-	write('done').
+	append(Board, [], BoardWithChild).
 dropChild(1, Colour-Number, FX-FY, Board, BoardWithChild):-
 	replacePieceAtPosition(Colour, Board, FX-FY, TempBoard, 0, BoardWithChild).
 
@@ -225,11 +218,11 @@ tryToMovePiece(Player, BoardState, FX-FY, TX-TY, BoardWithChild, Victory):-
 	findLine(BoardState, FX-FY, Line, 0),
 	findPiece(Line, FX, Piece, 0),
 	checkIfBelongsToPlayer(Player, Piece),
-	write('about to eat piece'), nl,
+	findLine(BoardState, TX-TY, Line2, 0),
+	findPiece(Line2, TX, Piece2, 0),
+	\+ checkIfBelongsToPlayer(Player, Piece2),
 	eatPiece(Player, Piece, BoardState, FX-FY, TX-TY, TempBoard, 0, Victory, FinalBoard, DropPiece),
-	write('ate piece'), nl,
 	replacePieceAtPosition(0, FinalBoard, FX-FY, TempBoard, 0, FinalBoard2),
-	write(DropPiece), nl,
 	dropChild(DropPiece, Piece, FX-FY, FinalBoard2, BoardWithChild).
 
 %validates if the position input is inside the board and belongs to the player
