@@ -188,8 +188,10 @@ replacePieceAtPosition(Piece, [H|T], FX-FY, Board, It, FinalBoard):-
 	replacePieceAtPosition(Piece, T, FX-FY, NewBoard, It2, FinalBoard).
 
 %leaves a child behind if queen is size>2 and if doesn't eat an enemy piece
-dropChild(0, Colour-Number, FX-FY, Board, BoardWithChild):-
-	append(Board, [], BoardWithChild).
+dropChild(0, Colour, FX-FY, Board, BoardWithChild):-
+	write('entrou'),
+	append(Board, [], BoardWithChild),
+	write('done').
 dropChild(1, Colour-Number, FX-FY, Board, BoardWithChild):-
 	replacePieceAtPosition(Colour, Board, FX-FY, TempBoard, 0, BoardWithChild).
 
@@ -199,9 +201,12 @@ tryToMovePiece(Player, BoardState, FX-FY, TX-TY, BoardWithChild, Victory):-
 	validateToPosition(Player, BoardState, FX-FY, TX-TY),
 	findLine(BoardState, FX-FY, Line, 0),
 	findPiece(Line, FX, Piece, 0),
-	checkIfDoesntBelongToPlayer(Player, Piece),
+	checkIfBelongsToPlayer(Player, Piece),
+	write('about to eat piece'), nl,
 	eatPiece(Player, Piece, BoardState, FX-FY, TX-TY, TempBoard, 0, Victory, FinalBoard, DropPiece),
+	write('ate piece'), nl,
 	replacePieceAtPosition(0, FinalBoard, FX-FY, TempBoard, 0, FinalBoard2),
+	write(DropPiece), nl,
 	dropChild(DropPiece, Piece, FX-FY, FinalBoard2, BoardWithChild).
 
 %validates if the position input is inside the board and belongs to the player

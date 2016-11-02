@@ -82,6 +82,12 @@ gameControler(Board, Player, 1, 1):-
 	write('CONGRATULATIONS '), write(Player), write('! You won this game!'), nl, nl.
 gameControler(Board, Player, 0, 1):-
 	nl, printBoard(Board), nl,
+	playerMove(Board, Player, Victory, NextBoard),
+    nextPlayer(Player, NextPlayer),
+    gameControler(NextBoard, NextPlayer, Victory, 1).
+
+playerMove(Board, Player, Victory, NextBoard):-
+	repeat, nl,
 	write('Player with '), write(Player), write(' pieces turn.'), nl,
 	write('Move Piece Line (number.): '), read(Y1), skip_line,
     write('Move Piece Column (number.): '), read(X1), skip_line,
@@ -92,20 +98,19 @@ gameControler(Board, Player, 0, 1):-
     FY is Y1 - 1,
     TX is X2 - 1,
     TY is Y2 - 1,
-    tryToMovePiece(PlayerChar, Board, FX-FY, TX-TY, NextBoard, Victory),
-    nextPlayer(Player, NextPlayer),
-    gameControler(NextBoard, NextPlayer, Victory, 1).
+    tryToMovePiece(PlayerChar, Board, FX-FY, TX-TY, NextBoard, Victory).
 
 mainMenu(Option):-
 	repeat,
+	write('Select any of the options bellow: '), nl,
 	write('1) 1 vs 1'),nl,
 	write('2) 1 vs PC'),nl,
-	write('3) PC vs PC'),nl,
 	write('0) Exit'),nl,nl,
 	write('Option: '),
 	read(Option), skip_line.
 
 game(Board):-
+	nl, nl, write(' Welcome to Monkey Queen'), nl, nl,
 	mainMenu(Option),
 	Option>=0, Option < 4,
 	initialBoard(Board),
