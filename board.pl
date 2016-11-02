@@ -1,5 +1,6 @@
 :- [gameplay].
 :- use_module(library(lists)).
+:- use_module(library(random)).
 
 initialBoard(Board):- append([],[
 				[0,0,0,0,0,b-20,0,0,0,0,0,0],
@@ -76,16 +77,23 @@ nextPlayer(black, white).
 getPlayer(white, w).
 getPlayer(black, b).
 
-gameControler(_,_,_,0).
-gameControler(Board, Player, 1, _):-
+gameController(_,_,_,0).
+gameController(Board, Player, 1, _):-
 	nl,
 	printBoard(Board),
 	write('CONGRATULATIONS '), write(Player), write('! You won this game!'), nl, nl.
-gameControler(Board, Player, 0, 1):-
+gameController(Board, Player, 0, 1):-
 	nl, printBoard(Board), nl,
 	playerMove(Board, Player, Victory, NextBoard),
     nextPlayer(Player, NextPlayer),
-    gameControler(NextBoard, NextPlayer, Victory, 1).
+    gameController(NextBoard, NextPlayer, Victory, 1).
+gameController(Board, white, 0, 2):-
+	nl, printBoard(Board), nl,
+	playerMove(Board, white, Victory, NextBoard),
+	nl, printBoard(NextBoard), nl,	
+	write('PCs turn...'), nl,
+	pcMove(NextBoard, black, Victory2, NextBoard2),
+    gameController(NextBoard2, white, Victory2, 2).
 
 playerMove(Board, Player, Victory, NextBoard):-
 	repeat, nl,
@@ -99,6 +107,15 @@ playerMove(Board, Player, Victory, NextBoard):-
     FY is Y1 - 1,
     TX is X2 - 1,
     TY is Y2 - 1,
+    tryToMovePiece(PlayerChar, Board, FX-FY, TX-TY, NextBoard, Victory).
+
+pcMove(Board, Player, Victory, NextBoard):-
+	repeat,
+    random(FX, 0, 11),
+    random(FY, 0, 11),
+    random(TX, 0, 11),
+    random(TY, 0, 11),
+    getPlayer(Player, PlayerChar),
     tryToMovePiece(PlayerChar, Board, FX-FY, TX-TY, NextBoard, Victory).
 
 mainMenu(Option):-
@@ -115,4 +132,4 @@ game(Board):-
 	mainMenu(Option),
 	Option>=0, Option < 4,
 	initialBoard(Board),
-	gameControler(Board, white, 0, Option).
+	gameController(Board, white, 0, Option).
