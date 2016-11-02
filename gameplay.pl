@@ -49,6 +49,12 @@ checkIfDoesntBelongToPlayer(Player, C):-
 
 %checks every single cell for different move types, cells have to be 0s
 %horizontal
+horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
+	TX2 is TX - 1,
+	FXNew = TX2.
+horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
+	TX2 is TX + 1,
+	FXNew = TX2.
 %left
 horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FXNew > TX + 1, FYNew = TY,
@@ -65,9 +71,15 @@ horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	findPiece(Line, FXNew1, Piece, 0),
 	Piece = 0,
 	horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew1-FYNew).
-horizontalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew).
+
 %vertical
 %up
+verticalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
+	TY2 is TY - 1,
+	FYNew = TY2, FXNew = TX.
+verticalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
+	TY2 is TY + 1,
+	FYNew = TY2, FXNew = TX.
 verticalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FYNew > TY + 1, FXNew = TX,
 	FYNew1 is FYNew - 1,
@@ -83,11 +95,23 @@ verticalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	findPiece(Line,FXNew, Piece, 0),
 	Piece = 0,
 	verticalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew1).
-verticalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew).
+
 %diagonal
+diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
+	TY2 is TY - 1, TX2 is TX - 1,
+	FYNew = TY2,	FXNew = TX2.
+diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
+	TY2 is TY + 1, TX2 is TX - 1,
+	FYNew = TY2,	FXNew = TX2.
+diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
+	TY2 is TY - 1, TX2 is TX + 1,
+	FYNew = TY2,	FXNew = TX2.
+diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
+	TY2 is TY + 1, TX2 is TX + 1,
+	FYNew = TY2,	FXNew = TX2.
 %top left
 diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
-	FYNew > TY + 1,	FXNew > TX,
+	FYNew > TY + 1,	FXNew > TX + 1,
 	FYNew1 is FYNew - 1,
 	FXNew1 is FXNew - 1,
 	findLine(BoardState, FXNew1-FYNew1, Line, 0),
@@ -96,7 +120,7 @@ diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew1-FYNew1).
 %top right
 diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
-	FYNew > TY + 1,	FXNew < TX,
+	FYNew > TY + 1,	FXNew < TX - 1,
 	FYNew1 is FYNew - 1,
 	FXNew1 is FXNew + 1,
 	findLine(BoardState, FXNew1-FYNew1, Line, 0),
@@ -105,7 +129,7 @@ diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew1-FYNew1).
 %bottom right 
 diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
-	FYNew < TY - 1,	FXNew < TX,
+	FYNew < TY - 1,	FXNew < TX - 1,
 	FYNew1 is FYNew + 1,
 	FXNew1 is FXNew + 1,
 	findLine(BoardState, FXNew1-FYNew1, Line, 0),
@@ -121,7 +145,6 @@ diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	findPiece(Line,FXNew1, Piece, 0),
 	Piece = 0,
 	diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew1-FYNew1).
-diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew).
 
 %If player eats a queen he wins.
 checkEndGame(b, Piece, Victory,DropPiece, NewPiece):-

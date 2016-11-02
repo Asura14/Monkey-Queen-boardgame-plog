@@ -76,7 +76,8 @@ nextPlayer(black, white).
 getPlayer(white, w).
 getPlayer(black, b).
 
-gameControler(Board, Player, 1, 1):-
+gameControler(_,_,_,0).
+gameControler(Board, Player, 1, _):-
 	nl,
 	printBoard(Board),
 	write('CONGRATULATIONS '), write(Player), write('! You won this game!'), nl, nl.
