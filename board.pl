@@ -71,10 +71,10 @@ translatePrint(X):-
 	write(X),
 	write(' ').
 
-nextPlayer(ivory, cigar).
-nextPlayer(cigar, ivory).
-getPlayer(ivory, w).
-getPlayer(cigar, b).
+nextPlayer(white, black).
+nextPlayer(black, white).
+getPlayer(white, w).
+getPlayer(black, b).
 
 gameControler(Board, Player, 1, 1):-
 	nl,
@@ -89,8 +89,8 @@ gameControler(Board, Player, 0, 1):-
 playerMove(Board, Player, Victory, NextBoard):-
 	repeat, nl,
 	write('Player with '), write(Player), write(' pieces turn.'), nl,
-	write('Move Piece Line (number.): '), read(Y1), skip_line,
-    write('Move Piece Column (number.): '), read(X1), skip_line,
+	write('Piece To Move Line (number.): '), read(Y1), skip_line,
+    write('Piece To Move Column (number.): '), read(X1), skip_line,
 	write('To Line (number.): '), read(Y2), skip_line,
     write('To Column (number.): '), read(X2), skip_line,
     getPlayer(Player, PlayerChar),
@@ -114,4 +114,4 @@ game(Board):-
 	mainMenu(Option),
 	Option>=0, Option < 4,
 	initialBoard(Board),
-	gameControler(Board, ivory, 0, Option).
+	gameControler(Board, white, 0, Option).
