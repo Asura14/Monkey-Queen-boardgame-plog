@@ -81,6 +81,7 @@ gameController(_,_,_,0).
 gameController(Board, Player, 1, _):-
 	nl,
 	printBoard(Board),
+	nextPlayer(Player, NextPlayer),
 	write('CONGRATULATIONS '), write(Player), write('! You won this game!'), nl, nl.
 gameController(Board, Player, 0, 1):-
 	nl, printBoard(Board), nl,
