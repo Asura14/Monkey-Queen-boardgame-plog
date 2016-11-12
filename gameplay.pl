@@ -26,7 +26,7 @@ replacePiece(TX, [H|T], Piece, HNew, Enum, Final):-
 	Enum2 is Enum + 1,
 	replacePiece(TX, T, Piece, FinalH, Enum2, Final).
 
-%finds line where piece is 
+%finds line where piece is
 findLine(0,0,Line,Enum).
 findLine([Line|T], FX-FY, Line, Enum):-
 	Enum = FY,
@@ -122,7 +122,7 @@ diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	findPiece(Line,FXNew1, Piece, 0),
 	Piece = 0,
 	diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew1-FYNew1).
-%bottom right 
+%bottom right
 diagonalMovement(Player, BoardState, FX-FY, TX-TY, FXNew-FYNew):-
 	FYNew < TY - 1,	FXNew < TX - 1,
 	FYNew1 is FYNew + 1,
@@ -161,7 +161,7 @@ checkEndGame(Colour-Char, Piece, Victory,DropPiece, NewPiece):-
 	Victory is 1,
 	DropPiece is 0,
 	append([],[Piece],NewPiece).
-checkEndGame(Char, Piece, Victory,DropPiece, NewPiece):-	
+checkEndGame(Char, Piece, Victory,DropPiece, NewPiece):-
 	Char = 0,
 	Victory is 0,
 	DropPiece is 0,
@@ -172,7 +172,7 @@ eatPiece(Player, Piece, [], FX-FY, TX-TY, Board, It, Victory, FinalBoard, DropPi
 	append([], Board, FinalBoard).
 eatPiece(Player, Piece, [H|T], FX-FY, TX-TY, Board, It, Victory, FinalBoard, DropPiece):-
 	It = TY,
-	findPiece(H, TX, PieceInCell, 0),	
+	findPiece(H, TX, PieceInCell, 0),
 	checkEndGame(PieceInCell, Piece, Victory, DropPiece, [NewPiece|Empty]),
 	replacePiece(TX, H, NewPiece, HNew, -1, Final),
 	append(Board, [Final], NewBoard),
