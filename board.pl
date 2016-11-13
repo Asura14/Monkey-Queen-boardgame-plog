@@ -1,3 +1,4 @@
+:- prolog_flag(single_var_warnings,_,off).
 :- [gameplay].
 :- use_module(library(lists)).
 :- use_module(library(random)).
@@ -27,7 +28,7 @@ printBoard([H|T]):-
 	write(' '),
 	printSpaces(H),
 	printBoard(T,1).
-printBoard([H|T],Y):-
+printBoard([H|T], Y):-
 	Y < 9,
 	printLine(x),
 	Y1 is Y + 1,
@@ -35,7 +36,7 @@ printBoard([H|T],Y):-
 	write(' '),
 	printSpaces(H),
 	printBoard(T,Y1).
-printBoard([H|T],Y):-
+printBoard([H|T], Y):-
 	printLine(x),
 	Y1 is Y + 1,
 	write(Y1),
