@@ -78,16 +78,19 @@ getPlayer(white, w).
 getPlayer(black, b).
 
 gameController(_,_,_,0).
+%Game End
 gameController(Board, Player, 1, _):-
 	nl,
 	printBoard(Board),
 	nextPlayer(Player, NextPlayer),
-	write('CONGRATULATIONS '), write(Player), write('! You won this game!'), nl, nl.
+	write('CONGRATULATIONS '), write(NextPlayer), write('! You won this game!'), nl, nl.
+%Player turn
 gameController(Board, Player, 0, 1):-
 	nl, printBoard(Board), nl,
 	playerMove(Board, Player, Victory, NextBoard),
     nextPlayer(Player, NextPlayer),
     gameController(NextBoard, NextPlayer, Victory, 1).
+%Computer turn
 gameController(Board, white, 0, 2):-
 	nl, printBoard(Board), nl,
 	playerMove(Board, white, Victory, NextBoard),
@@ -96,6 +99,7 @@ gameController(Board, white, 0, 2):-
 	pcMove(NextBoard, black, Victory2, NextBoard2),
     gameController(NextBoard2, white, Victory2, 2).
 
+%Calls gameplay functions to try and execute player's desired move
 playerMove(Board, Player, Victory, NextBoard):-
 	repeat, nl,
 	write('Player with '), write(Player), write(' pieces turn.'), nl,
@@ -110,6 +114,7 @@ playerMove(Board, Player, Victory, NextBoard):-
     TY is Y2 - 1,
     tryToMovePiece(PlayerChar, Board, FX-FY, TX-TY, NextBoard, Victory).
 
+%Calls gameplay functions to try and execute pc random move
 pcMove(Board, Player, Victory, NextBoard):-
 	repeat,
     random(FX, 0, 11),
