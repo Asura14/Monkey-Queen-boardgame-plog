@@ -135,6 +135,7 @@ mainMenu(Option):-
 	read(Option), skip_line.
 
 game(Board):-
+	nl,nl,
 	nl, nl, write(' Welcome to Monkey Queen'), nl, nl,
 	mainMenu(Option),
 	Option>=0, Option < 4,
